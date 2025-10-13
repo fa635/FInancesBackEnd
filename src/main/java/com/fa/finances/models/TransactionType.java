@@ -1,5 +1,8 @@
 package com.fa.finances.models;
 
-public enum TransactionType {
 
+public enum TransactionType {
+    INCOME,
+    EXPENSE
 }
+
