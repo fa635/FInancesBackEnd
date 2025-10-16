@@ -7,6 +7,8 @@ import com.fa.finances.models.User;
 import com.fa.finances.repositories.UserRepository;
 import com.fa.finances.requests.UserRequest;
 import com.fa.finances.services.interfaces.IUserService;
+import com.fa.finances.utils.UserMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -57,22 +59,20 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<UserDTO> getAll() {
         return userRepository.findAll().stream()
-                .map(u -> new UserDTO(u.getId(), u.getName(), u.getEmail(), u.getRole()))
+        		.map(UserMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserDTO getById(Long id) throws FinancesException {
-        User u = userRepository.findById(id)
-                .orElseThrow(() -> new FinancesException("User not found"));
-        return new UserDTO(u.getId(), u.getName(), u.getEmail(), u.getRole());
+    	return UserMapper.toDTO(userRepository.findById(id)
+                .orElseThrow(() -> new FinancesException("User not found")));
     }
 
     @Override
     public UserDTO getByEmail(String email) throws FinancesException {
-        User u = userRepository.findByEmail(email)
-                .orElseThrow(() -> new FinancesException("User not found"));
-        return new UserDTO(u.getId(), u.getName(), u.getEmail(), u.getRole());
+    	return UserMapper.toDTO(userRepository.findByEmail(email)
+                .orElseThrow(() -> new FinancesException("User not found")));
     }
 }
 

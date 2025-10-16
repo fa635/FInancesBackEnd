@@ -18,6 +18,8 @@ public class GoalRequest {
 
     @NotNull
     private BigDecimal targetAmount;
+    
+    private BigDecimal currentAmount;
 
     private LocalDate deadline;
 }

@@ -1,5 +1,12 @@
 package com.fa.finances.responses;
 
-public class ResponseObject {
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ResponseObject<T> extends ResponseBase{
+
+	private T dati;
 }

@@ -1,5 +1,14 @@
 package com.fa.finances.responses;
 
-public class ResponseList {
 
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ResponseList<T> extends ResponseBase{
+
+	private List<T> dati;
 }
