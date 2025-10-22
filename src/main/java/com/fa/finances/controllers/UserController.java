@@ -33,6 +33,21 @@ public class UserController {
         }
         return ResponseEntity.ok(response);
     }
+    
+    @PostMapping("/signin")
+    public ResponseObject<String> signin(@RequestBody UserRequest req) {
+        ResponseObject<String> response = new ResponseObject<>();
+        try {
+            String token = userService.signin(req);
+            response.setRc(true);
+            response.setMsg("Login successful");
+            response.setDati(token);
+        } catch (FinancesException e) {
+            response.setRc(false);
+            response.setMsg(e.getMessage());
+        }
+        return response;
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject<Void>> updateUser(@PathVariable Long id, @RequestBody UserRequest req) {

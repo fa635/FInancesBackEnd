@@ -18,6 +18,8 @@ public interface IUserService {
 
     UserDTO getById(Long id) throws FinancesException;
 
-    UserDTO getByEmail(String email) throws FinancesException; 
+    UserDTO getByEmail(String email) throws FinancesException;
+    
+    String signin(UserRequest req) throws FinancesException;
 }
 
