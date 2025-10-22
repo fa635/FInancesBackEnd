@@ -19,7 +19,7 @@ public class UserController {
 
     private final IUserService userService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ResponseObject<Long>> createUser(@RequestBody UserRequest req) {
         ResponseObject<Long> response = new ResponseObject<>();
         try {
