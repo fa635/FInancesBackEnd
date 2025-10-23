@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ public class UserServiceImpl implements IUserService {
     private JwtUtil jwtUtil;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long create(UserRequest req) throws FinancesException {
         if (userRepository.existsByEmail(req.getEmail())) {
             throw new FinancesException("Email already in use");
@@ -58,6 +60,7 @@ public class UserServiceImpl implements IUserService {
     
     
     @Override
+    @Transactional(readOnly = true)
     public String signin(UserRequest req) throws FinancesException {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -77,6 +80,7 @@ public class UserServiceImpl implements IUserService {
     
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Long id, UserRequest req) throws FinancesException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("User not found"));
@@ -87,6 +91,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws FinancesException {
         if (!userRepository.existsById(id)) {
             throw new FinancesException("User not found");
@@ -95,6 +100,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> getAll() {
         return userRepository.findAll().stream()
         		.map(UserMapper::toDTO)
@@ -102,12 +108,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO getById(Long id) throws FinancesException {
     	return UserMapper.toDTO(userRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("User not found")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO getByEmail(String email) throws FinancesException {
     	return UserMapper.toDTO(userRepository.findByEmail(email)
                 .orElseThrow(() -> new FinancesException("User not found")));

@@ -11,6 +11,7 @@ import com.fa.finances.utils.TransactionMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,7 @@ public class TransactionServiceImpl implements ITransactionService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long create(TransactionRequest req, Long userId) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));
@@ -45,6 +47,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Long id, TransactionRequest req) throws FinancesException {
         Transaction t = transactionRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("Transaction not found"));
@@ -62,6 +65,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws FinancesException {
         if (!transactionRepository.existsById(id)) {
             throw new FinancesException("Transaction not found");
@@ -70,6 +74,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TransactionDTO> getAll(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         return transactionRepository.findByUser(user).stream()
@@ -78,12 +83,14 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TransactionDTO getById(Long id) throws FinancesException {
     	return TransactionMapper.toDTO(transactionRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("Transaction not found")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TransactionDTO> getByDateRange(Long userId, LocalDate startDate, LocalDate endDate) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));
@@ -93,6 +100,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TransactionDTO> getByCategory(Long userId, Long categoryId) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));

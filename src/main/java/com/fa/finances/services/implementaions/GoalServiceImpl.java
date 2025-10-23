@@ -13,6 +13,7 @@ import com.fa.finances.utils.GoalMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class GoalServiceImpl implements IGoalService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long create(GoalRequest req, Long userId) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));
@@ -42,6 +44,7 @@ public class GoalServiceImpl implements IGoalService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Long id, GoalRequest req) throws FinancesException {
         Goal goal = goalRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("Goal not found"));
@@ -55,6 +58,7 @@ public class GoalServiceImpl implements IGoalService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws FinancesException {
         if (!goalRepository.existsById(id)) {
             throw new FinancesException("Goal not found");
@@ -63,6 +67,7 @@ public class GoalServiceImpl implements IGoalService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GoalDTO> getAll(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         return goalRepository.findByUser(user).stream()
@@ -71,6 +76,7 @@ public class GoalServiceImpl implements IGoalService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GoalDTO getById(Long id) throws FinancesException {
     	return GoalMapper.toDTO(goalRepository.findById(id)
     			.orElseThrow(() -> new FinancesException("Goal not found")));

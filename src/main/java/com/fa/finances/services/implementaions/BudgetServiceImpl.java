@@ -15,6 +15,7 @@ import com.fa.finances.utils.BudgetMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class BudgetServiceImpl implements IBudgetService {
     private final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long create(BudgetRequest req, Long userId) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));
@@ -52,6 +54,7 @@ public class BudgetServiceImpl implements IBudgetService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Long id, BudgetRequest req) throws FinancesException {
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("Budget not found"));
@@ -67,6 +70,7 @@ public class BudgetServiceImpl implements IBudgetService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws FinancesException {
         if (!budgetRepository.existsById(id)) {
             throw new FinancesException("Budget not found");
@@ -75,6 +79,7 @@ public class BudgetServiceImpl implements IBudgetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BudgetDTO> getAll(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         return budgetRepository.findByUser(user).stream()
@@ -83,12 +88,14 @@ public class BudgetServiceImpl implements IBudgetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BudgetDTO getById(Long id) throws FinancesException {
     	return BudgetMapper.toDTO(budgetRepository.findById(id)
     			.orElseThrow(() -> new FinancesException("Budget not found")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BudgetDTO getByMonthAndCategory(Long userId, String month, Long categoryId) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));

@@ -13,6 +13,7 @@ import com.fa.finances.utils.CategoryMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class CategoryServiceImpl implements ICategoryService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long create(CategoryRequest req, Long userId) throws FinancesException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FinancesException("User not found"));
@@ -39,6 +41,7 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Long id, CategoryRequest req) throws FinancesException {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("Category not found"));
@@ -48,6 +51,7 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws FinancesException {
         if (!categoryRepository.existsById(id)) {
             throw new FinancesException("Category not found");
@@ -56,6 +60,7 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDTO> getAll(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         return categoryRepository.findByUser(user).stream()
@@ -64,6 +69,7 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDTO getById(Long id) throws FinancesException {
     	return CategoryMapper.toDTO(categoryRepository.findById(id)
                 .orElseThrow(() -> new FinancesException("Category not found")));
